@@ -16,13 +16,13 @@ namespace FaceTutorial
 {
     public partial class MainWindow : Window
     {        
+        // The FaceServiceClient used to perform calls to the Face API.
         private IFaceServiceClient faceServiceClient = null;
 
         Face[] faces;                   // The list of detected faces.
         String[] faceDescriptions;      // The list of descriptions for the detected faces.
         double resizeFactor;            // The resize factor for the displayed image.
-
-        // David Lim
+        
         // There will be 2 images hence we must have duplicate properties
         // for the 2nd image.
         Face[] faces2;                  // The list of detected faces on FacePhoto2 image control.
@@ -63,8 +63,7 @@ namespace FaceTutorial
 
             // Detect any faces in the image.
             Title = "Detecting...";
-
-            // David Lim
+            
             // Define an array of Face objects for current detection.
             // This array will later be assigned to either face or face2.
             //
@@ -150,7 +149,6 @@ namespace FaceTutorial
         // and "FacePhoto2" image controls.
         private void FacePhoto_MouseMove(object sender, MouseEventArgs e)
         {
-            // David Lim
             // Make generic references.
             Face[] currentFaces;
             String[] currentFaceDescriptions;
@@ -176,7 +174,6 @@ namespace FaceTutorial
             }
 
             // If the REST call has not completed, return from this method.
-            // David Lim
             // We must also include check for faces2.
             if (/*faces*/ currentFaces == null)
                 return;
@@ -206,7 +203,6 @@ namespace FaceTutorial
                 // Display the face description for this face if the mouse is over this face rectangle.
                 if (mouseXY.X >= left && mouseXY.X <= left + width && mouseXY.Y >= top && mouseXY.Y <= top + height)
                 {
-                    // David Lim
                     currentTextBlock.Text = currentFaceDescriptions[i];
                     mouseOverFace = true;
                     break;
@@ -216,7 +212,6 @@ namespace FaceTutorial
             // If the mouse is not over a face rectangle.
             if (!mouseOverFace)
             {
-                // David Lim
                 currentTextBlock.Text = "Place the mouse pointer over a face to see the face description.";
             }
         }
@@ -423,8 +418,7 @@ namespace FaceTutorial
                 MessageBox.Show(ex.Message);
             }
         }
-
-        // David Lim
+        
         // DrawRectOnMatchedFace() will draw a recangle on a face image on a specified Image control.
         void DrawRectOnMatchedFace(Image imgControl, double currentResizeFactor,  Face detectedface, SolidColorBrush brushColor, double thickness)
         {
