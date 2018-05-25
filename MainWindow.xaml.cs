@@ -74,12 +74,11 @@ namespace FaceTutorial
             Face[] detectedfaces;
             String[] detectedFaceDescriptions;
             double currentResizeFactor;
-
-            /*faces*/
+            
             detectedfaces = await UploadAndDetectFaces(filePath);
-            Title = String.Format("Detection Finished. {0} face(s) detected", /*faces*/detectedfaces.Length);
+            Title = String.Format("Detection Finished. {0} face(s) detected", detectedfaces.Length);
 
-            if (/*faces*/detectedfaces.Length > 0)
+            if (detectedfaces.Length > 0)
             {
                 // Prepare to draw rectangles around the faces.
                 DrawingVisual visual = new DrawingVisual();
@@ -87,35 +86,35 @@ namespace FaceTutorial
                 drawingContext.DrawImage(bitmapSource,
                     new Rect(0, 0, bitmapSource.Width, bitmapSource.Height));
                 double dpi = bitmapSource.DpiX;
-                /*resizeFactor*/ currentResizeFactor = 96 / dpi;
-                /*faceDescriptions*/ detectedFaceDescriptions = new String[/*faces*/detectedfaces.Length];
+                currentResizeFactor = 96 / dpi;
+                detectedFaceDescriptions = new String[detectedfaces.Length];
 
-                for (int i = 0; i < /*faces*/detectedfaces.Length; ++i)
+                for (int i = 0; i < detectedfaces.Length; ++i)
                 {
-                    Face face = /*faces*/detectedfaces[i];
+                    Face face = detectedfaces[i];
 
                     // Draw a rectangle on the face.
                     drawingContext.DrawRectangle(
                         Brushes.Transparent,
                         new Pen(Brushes.Red, 2),
                         new Rect(
-                            face.FaceRectangle.Left * /*resizeFactor*/ currentResizeFactor,
-                            face.FaceRectangle.Top * /*resizeFactor*/ currentResizeFactor,
-                            face.FaceRectangle.Width * /*resizeFactor*/ currentResizeFactor,
-                            face.FaceRectangle.Height * /*resizeFactor*/ currentResizeFactor
+                            face.FaceRectangle.Left * currentResizeFactor,
+                            face.FaceRectangle.Top * currentResizeFactor,
+                            face.FaceRectangle.Width * currentResizeFactor,
+                            face.FaceRectangle.Height * currentResizeFactor
                             )
                     );
 
                     // Store the face description.
-                    /*faceDescriptions[i]*/ detectedFaceDescriptions[i] = FaceDescription(face);
+                    detectedFaceDescriptions[i] = FaceDescription(face);
                 }
 
                 drawingContext.Close();
 
                 // Display the image with the rectangle around the face.
                 RenderTargetBitmap faceWithRectBitmap = new RenderTargetBitmap(
-                    (int)(bitmapSource.PixelWidth * /*resizeFactor*/ currentResizeFactor),
-                    (int)(bitmapSource.PixelHeight * /*resizeFactor*/ currentResizeFactor),
+                    (int)(bitmapSource.PixelWidth * currentResizeFactor),
+                    (int)(bitmapSource.PixelHeight * currentResizeFactor),
                     96,
                     96,
                     PixelFormats.Pbgra32);
