@@ -15,18 +15,8 @@ using System.Windows.Controls;  // For the definition of common controls like Bu
 namespace FaceTutorial
 {
     public partial class MainWindow : Window
-    {
-        // Replace the first parameter with your valid subscription key.
-        //
-        // Replace or verify the region in the second parameter.
-        //
-        // You must use the same region in your REST API call as you used to obtain your subscription keys.
-        // For example, if you obtained your subscription keys from the westus region, replace
-        // "westcentralus" in the URI below with "westus".
-        //
-        // NOTE: Free trial subscription keys are generated in the westcentralus region, so if you are using
-        // a free trial subscription key, you should not need to change this region.
-        private /*readonly*/ IFaceServiceClient faceServiceClient = null;
+    {        
+        private IFaceServiceClient faceServiceClient = null;
 
         Face[] faces;                   // The list of detected faces.
         String[] faceDescriptions;      // The list of descriptions for the detected faces.
@@ -233,6 +223,16 @@ namespace FaceTutorial
 
         private void MSCognitiveServicesLogin_Click(object sender, RoutedEventArgs e)
         {
+            // Replace the first parameter with your valid subscription key.
+            //
+            // Replace or verify the region in the second parameter.
+            //
+            // You must use the same region in your REST API call as you used to obtain your subscription keys.
+            // For example, if you obtained your subscription keys from the westus region, replace
+            // "westcentralus" in the URI below with "westus".
+            //
+            // NOTE: Free trial subscription keys are generated in the westcentralus region, so if you are using
+            // a free trial subscription key, you should not need to change this region.
             faceServiceClient = new FaceServiceClient(FaceRecogKey.Text, "https://westcentralus.api.cognitive.microsoft.com/face/v1.0");
             if (faceServiceClient != null)
             {
