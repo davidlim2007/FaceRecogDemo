@@ -179,14 +179,14 @@ namespace FaceTutorial
             
             // David Lim
             // We must also include check for faces2.
-            if (/*faces*/ currentFaces == null)
+            if (currentFaces == null)
                 return;
 
 
             // Find the mouse position relative to the image.
-            Point mouseXY = e.GetPosition(/*FacePhoto*/ imgControl);
+            Point mouseXY = e.GetPosition(imgControl);
 
-            ImageSource imageSource = /*FacePhoto.Source*/ imgControl.Source;
+            ImageSource imageSource = imgControl.Source;
             BitmapSource bitmapSource = (BitmapSource)imageSource;
 
             // Scale adjustment between the actual size and displayed size.
@@ -196,9 +196,9 @@ namespace FaceTutorial
             // Check if this mouse position is over a face rectangle.
             bool mouseOverFace = false;
 
-            for (int i = 0; i < /*faces*/currentFaces.Length; ++i)
+            for (int i = 0; i < currentFaces.Length; ++i)
             {
-                FaceRectangle fr = /*faces[i]*/currentFaces[i].FaceRectangle;
+                FaceRectangle fr = currentFaces[i].FaceRectangle;
                 double left = fr.Left * scale;
                 double top = fr.Top * scale;
                 double width = fr.Width * scale;
