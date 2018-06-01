@@ -261,18 +261,23 @@ namespace FaceTutorial
 
         private void FaceMatch_Click(object sender, RoutedEventArgs e)
         {
+            // Check if faces is null - i.e. there are no detected faces in the left image.
             if (faces == null)
             {
                 MessageBox.Show("Error no faces on Left Hand Image.");
                 return;
             }
 
+            // Check if faces2 is null - i.e. there are no detected faces in the right image.
             if (faces2 == null)
             {
                 MessageBox.Show("Error no faces on Right Hand Image.");
                 return;
             }
 
+            // If faces contains more than one Face object, we show an error message and return.
+            // This is because the left image (i.e. the "1" image) can only contain one detected
+            // face.
             if (faces.Length > 1)
             {
                 MessageBox.Show("Left Hand Image contains more than 1 image.\r\nMulti-Face Images must be on the Right.");
@@ -370,6 +375,10 @@ namespace FaceTutorial
         {
             MatchResult.Text = "";
 
+            // The type of matching to perform is based on
+            // the size of faces2. If it contains multiple faces,
+            // 1vN matching is performed. Otherwise, 1v1 matching
+            // is performed.
             if (faces2.Length == 1)
             {
                 Perform1To1FaceMatch();
