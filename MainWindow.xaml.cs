@@ -70,7 +70,7 @@ namespace FaceTutorial
             // This array will later be assigned to either face or face2.
             //
             // Also define an array of detectedFaceDescriptions for the current detection.
-            // This arrat will later be assigned to either faceDescriptions or faceDescriptions2.
+            // This array will later be assigned to either faceDescriptions or faceDescriptions2.
             //
             // Also define a double for the ResizeFactor for the current image.
             Face[] detectedfaces;
@@ -123,23 +123,40 @@ namespace FaceTutorial
 
                 faceWithRectBitmap.Render(visual);
 
-                // Set properties according to which "Browse" button was clicked. 
+                // Set properties according to which "Browse" button had triggered
+                // the event handler.
                 if (((Button)sender).Name.Equals("BrowseButton"))
                 {
+                    // David Lim
+                    // If BrowseButton was clicked: 
+                    //
+                    // 1. The image will be displayed on FacePhoto.
+                    // 2. The contents of detectedFaces will be assigned to faces.
+                    // 3. The contents of detectedFaceDescriptions will be assigned to faceDescriptions.
+                    // 4. The value of currentResizeFactor will be assigned to resizeFactor.
+                    // 5. The text value of faceDescriptionStatusBar will be set, prompting the user to hover the
+                    // mouse over the detected face(s).
                     FacePhoto.Source = faceWithRectBitmap;
                     faces = detectedfaces;
                     faceDescriptions = detectedFaceDescriptions;
                     resizeFactor = currentResizeFactor;
-                    // Set the status bar text.
                     faceDescriptionStatusBar.Text = "Place the mouse pointer over a face to see the face description.";
                 }
                 else
                 {
+                    // David Lim
+                    // If BrowseButton2 was clicked: 
+                    //
+                    // 1. The image will be displayed on FacePhoto2.
+                    // 2. The contents of detectedFaces will be assigned to faces2.
+                    // 3. The contents of detectedFaceDescriptions will be assigned to faceDescriptions2.
+                    // 4. The value of currentResizeFactor will be assigned to resizeFactor2.
+                    // 5. The text value of faceDescriptionStatusBar2 will be set, prompting the user to hover the
+                    // mouse over the detected face(s).
                     FacePhoto2.Source = faceWithRectBitmap;
                     faces2 = detectedfaces;
                     faceDescriptions2 = detectedFaceDescriptions;
                     resizeFactor2 = currentResizeFactor;
-                    // Set the status bar text.
                     faceDescriptionStatusBar2.Text = "Place the mouse pointer over a face to see the face description.";
                 }
             }
