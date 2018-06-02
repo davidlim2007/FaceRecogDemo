@@ -97,6 +97,14 @@ namespace FaceTutorial
             // resizeFactor2. Note that the Resize Factor depends on the resolution of the current
             // image as so is not a constant value. Another important factor is the XAML image tag
             // "Stretch" property.
+            //
+            // These variables are used in lieu of member variables (e.g. faces), as is the case in the 
+            // original tutorial. This is because BrowseButton_Click() is a generic method that applies 
+            // to both BrowseButton and BrowseButton2. Hence, the face data is stored locally before 
+            // being transferred to the relevant member variable, as will be explained later. 
+            //
+            // In the case of the tutorial, however, there is only one Browse button and one Image control. 
+            // Hence we are able to transfer the face data straightaway to the faces array.
             Face[] detectedfaces;
             String[] detectedFaceDescriptions;
             double currentResizeFactor;
