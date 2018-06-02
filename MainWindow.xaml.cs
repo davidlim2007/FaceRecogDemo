@@ -335,6 +335,8 @@ namespace FaceTutorial
             {
                 using (Stream imageFileStream = File.OpenRead(imageFilePath))
                 {
+                    // The await keyword is used so that DetectAsync() will not return until it completes.
+                    // The await keyword effectively makes DetectAsync() synchronous.
                     Face[] faces = await faceServiceClient.DetectAsync(imageFileStream, returnFaceId: true, returnFaceLandmarks: false, returnFaceAttributes: faceAttributes);
                     return faces;
                 }
