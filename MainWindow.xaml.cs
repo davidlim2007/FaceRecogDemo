@@ -194,13 +194,22 @@ namespace FaceTutorial
         private void FacePhoto_MouseMove(object sender, MouseEventArgs e)
         {
             // DavidLim :
-            // Make generic references.
+            // Depending on which Image control had triggered the event handler, these 
+            // variables will be assigned the appropriate values (e.g. if FacePhoto had 
+            // triggered the method, currentFaces will be assigned the value of faces, 
+            // currentFaceDescriptions will be assigned the value of faceDescriptions, 
+            // and so on.
             Face[] currentFaces;
             String[] currentFaceDescriptions;
             TextBlock currentTextBlock;
             double currentResizeFactor;
 
             Image imgControl;
+
+            // DavidLim:
+            // In order to determine which Image control had triggered the event handler
+            // (and hence which member variables to use when assigning the values of the
+            // local variables above), the Name property of the sender parameter is checked.
             if (((Image)sender).Name.Equals("FacePhoto"))
             {
                 currentFaces = faces;
