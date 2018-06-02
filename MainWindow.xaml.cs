@@ -10,21 +10,37 @@ using System.Windows.Media.Imaging;
 using Microsoft.ProjectOxford.Common.Contract;
 using Microsoft.ProjectOxford.Face;
 using Microsoft.ProjectOxford.Face.Contract;
-using System.Windows.Controls;  // For the definition of common controls like Button.
+using System.Windows.Controls;  // DavidLim : For the definition of common controls like Button.
 
 namespace FaceTutorial
 {
     public partial class MainWindow : Window
-    {        
-        // The FaceServiceClient used to perform calls to the Face API.
-        private IFaceServiceClient faceServiceClient = null;
+    {
+        // Replace the first parameter with your valid subscription key.
+        //
+        // Replace or verify the region in the second parameter.
+        //
+        // You must use the same region in your REST API call as you used to obtain your subscription keys.
+        // For example, if you obtained your subscription keys from the westus region, replace
+        // "westcentralus" in the URI below with "westus".
+        //
+        // NOTE: Free trial subscription keys are generated in the westcentralus region, so if you are using
+        // a free trial subscription key, you should not need to change this region.
+        //
+        // DavidLim : 
+        // The original tutorial code instantiated faceServiceClient to a new
+        // instance of FaceServiceClient with preset Face API keys and rootAPI.
+        // I changed the tutorial code so that faceServiceClient is set to an intial value of null.
+        // It will only be instantiated later after a FaceAPI key has been supplied by the User.
+        private /*readonly*/ IFaceServiceClient faceServiceClient = null;
 
         Face[] faces;                   // The list of detected faces.
         String[] faceDescriptions;      // The list of descriptions for the detected faces.
         double resizeFactor;            // The resize factor for the displayed image.
-        
-        // David Lim
-        // There will be 2 images hence we must have duplicate properties
+
+        // DavidLim :
+        // As my enhancement for the tutorial, I have added a 2nd (right hand side) image.
+        // As there will be 2 images hence we must have duplicate properties
         // for the 2nd image.
         Face[] faces2;                  // The list of detected faces on FacePhoto2 image control.
         String[] faceDescriptions2;     // The list of descriptions for the detected faces FacePhoto2 image control.
@@ -36,7 +52,10 @@ namespace FaceTutorial
         }
 
         // Displays the image and calls Detect Faces.
+        // DavidLim :
         // BrowseButton_Click() is the event handler shared by both "Browse" buttons.
+        // The sender parameter will tell us which button was the one clicked.
+        // Later in this code, we will use the Name property of sender to determine this.
         private async void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
             // Get the image file to scan from the user.
@@ -64,23 +83,29 @@ namespace FaceTutorial
 
             // Detect any faces in the image.
             Title = "Detecting...";
-            
-            // David Lim
-            // Define an array of Face objects for current detection.
-            // This array will later be assigned to either face or face2.
+
+            // DavidLim
+            // Define an array of Face objects (detectedfaces) for the current detection.
+            // This array will later be assigned to either faces or faces2 (these are
+            // member variables).
             //
-            // Also define an array of detectedFaceDescriptions for the current detection.
+            // Also define an array of strings (detectedFaceDescriptions) for the the current detection.
             // This array will later be assigned to either faceDescriptions or faceDescriptions2.
             //
-            // Also define a double for the ResizeFactor for the current image.
+            // Also define a double (currentResizeFactor) for the ResizeFactor for the current image.
+            // The value of currentResizeFactor will later be assigned to either resizeFactor or
+            // resizeFactor2. Note that the Resize Factor depends on the resolution of the current
+            // image as so is not a constant value. Another important factor is the XAML image tag
+            // "Stretch" property.
             Face[] detectedfaces;
             String[] detectedFaceDescriptions;
             double currentResizeFactor;
-            
-            detectedfaces = await UploadAndDetectFaces(filePath);
-            Title = String.Format("Detection Finished. {0} face(s) detected", detectedfaces.Length);
 
-            if (detectedfaces.Length > 0)
+            /*faces*/
+            detectedfaces = await UploadAndDetectFaces(filePath);
+            Title = String.Format("Detection Finished. {0} face(s) detected", /*faces*/detectedfaces.Length);
+
+            if (/*faces*/detectedfaces.Length > 0)
             {
                 // Prepare to draw rectangles around the faces.
                 DrawingVisual visual = new DrawingVisual();
@@ -88,26 +113,33 @@ namespace FaceTutorial
                 drawingContext.DrawImage(bitmapSource,
                     new Rect(0, 0, bitmapSource.Width, bitmapSource.Height));
                 double dpi = bitmapSource.DpiX;
+                /*resizeFactor*/
                 currentResizeFactor = 96 / dpi;
-                detectedFaceDescriptions = new String[detectedfaces.Length];
+                /*faceDescriptions*/
+                detectedFaceDescriptions = new String[/*faces*/detectedfaces.Length];
 
-                for (int i = 0; i < detectedfaces.Length; ++i)
+                for (int i = 0; i < /*faces*/detectedfaces.Length; ++i)
                 {
-                    Face face = detectedfaces[i];
+                    Face face = /*faces*/detectedfaces[i];
 
                     // Draw a rectangle on the face.
+                    // DavidLim :
+                    // Note that the dimensions given in FaceRectangle
+                    // is relative to the dimensions of the bitmap which
+                    // has been sent for face detection.
                     drawingContext.DrawRectangle(
                         Brushes.Transparent,
                         new Pen(Brushes.Red, 2),
                         new Rect(
-                            face.FaceRectangle.Left * currentResizeFactor,
-                            face.FaceRectangle.Top * currentResizeFactor,
-                            face.FaceRectangle.Width * currentResizeFactor,
-                            face.FaceRectangle.Height * currentResizeFactor
+                            face.FaceRectangle.Left * /*resizeFactor*/ currentResizeFactor,
+                            face.FaceRectangle.Top * /*resizeFactor*/ currentResizeFactor,
+                            face.FaceRectangle.Width * /*resizeFactor*/ currentResizeFactor,
+                            face.FaceRectangle.Height * /*resizeFactor*/ currentResizeFactor
                             )
                     );
 
                     // Store the face description.
+                    /*faceDescriptions[i]*/
                     detectedFaceDescriptions[i] = FaceDescription(face);
                 }
 
@@ -115,59 +147,46 @@ namespace FaceTutorial
 
                 // Display the image with the rectangle around the face.
                 RenderTargetBitmap faceWithRectBitmap = new RenderTargetBitmap(
-                    (int)(bitmapSource.PixelWidth * currentResizeFactor),
-                    (int)(bitmapSource.PixelHeight * currentResizeFactor),
+                    (int)(bitmapSource.PixelWidth * /*resizeFactor*/ currentResizeFactor),
+                    (int)(bitmapSource.PixelHeight * /*resizeFactor*/ currentResizeFactor),
                     96,
                     96,
                     PixelFormats.Pbgra32);
 
                 faceWithRectBitmap.Render(visual);
 
-                // Set properties according to which "Browse" button had triggered
-                // the event handler.
+                // DavidLim :
+                // Set properties according to which "Browse" button was clicked. 
                 if (((Button)sender).Name.Equals("BrowseButton"))
                 {
-                    // David Lim
-                    // If BrowseButton was clicked: 
-                    //
-                    // 1. The image will be displayed on FacePhoto.
-                    // 2. The contents of detectedFaces will be assigned to faces.
-                    // 3. The contents of detectedFaceDescriptions will be assigned to faceDescriptions.
-                    // 4. The value of currentResizeFactor will be assigned to resizeFactor.
-                    // 5. The text value of faceDescriptionStatusBar will be set, prompting the user to hover the
-                    // mouse over the detected face(s).
                     FacePhoto.Source = faceWithRectBitmap;
                     faces = detectedfaces;
                     faceDescriptions = detectedFaceDescriptions;
                     resizeFactor = currentResizeFactor;
+                    // Set the status bar text.
                     faceDescriptionStatusBar.Text = "Place the mouse pointer over a face to see the face description.";
                 }
                 else
                 {
-                    // David Lim
-                    // If BrowseButton2 was clicked: 
-                    //
-                    // 1. The image will be displayed on FacePhoto2.
-                    // 2. The contents of detectedFaces will be assigned to faces2.
-                    // 3. The contents of detectedFaceDescriptions will be assigned to faceDescriptions2.
-                    // 4. The value of currentResizeFactor will be assigned to resizeFactor2.
-                    // 5. The text value of faceDescriptionStatusBar2 will be set, prompting the user to hover the
-                    // mouse over the detected face(s).
                     FacePhoto2.Source = faceWithRectBitmap;
                     faces2 = detectedfaces;
                     faceDescriptions2 = detectedFaceDescriptions;
                     resizeFactor2 = currentResizeFactor;
+                    // Set the status bar text.
                     faceDescriptionStatusBar2.Text = "Place the mouse pointer over a face to see the face description.";
                 }
             }
         }
 
         // Displays the face description when the mouse is over a face rectangle.
+        // DavidLim :
         // FacePhoto_MouseMove() is an event handler shared by both "FacePhoto" 
         // and "FacePhoto2" image controls.
+        // We use the sender parameter and its Name property to determine which
+        // image control was the one involved.
         private void FacePhoto_MouseMove(object sender, MouseEventArgs e)
         {
-            // David Lim
+            // DavidLim :
             // Make generic references.
             Face[] currentFaces;
             String[] currentFaceDescriptions;
@@ -193,19 +212,30 @@ namespace FaceTutorial
             }
 
             // If the REST call has not completed, return from this method.
-            
-            // David Lim
-            // We must also include check for faces2.
-            if (currentFaces == null)
+            // DavidLim :
+            // We use currentFaces instead of directly using faces
+            // so as to also include check for faces2.
+            if (/*faces*/ currentFaces == null)
                 return;
 
 
             // Find the mouse position relative to the image.
-            Point mouseXY = e.GetPosition(imgControl);
+            Point mouseXY = e.GetPosition(/*FacePhoto*/ imgControl);
 
-            ImageSource imageSource = imgControl.Source;
+            ImageSource imageSource = /*FacePhoto.Source*/ imgControl.Source;
             BitmapSource bitmapSource = (BitmapSource)imageSource;
 
+            // DavidLim :
+            // Note that bitmapSource is different from the image that is displayed 
+            // on-screen on the image control.
+            // The image control may display the image larger or smaller than
+            // the actual bitmap itself. imgControl.ActualWidth and imgControl.ActualHeight
+            // provides the actual on-screen width and height of the image displayed on 
+            // the image control.
+            // Also note that the face rectangle, when shown on the image control on the
+            // screen, is similarly larger or smaller than the dimensions in 
+            // currentFaces.FaceRectangle. This is where scale is important.
+            //
             // Scale adjustment between the actual size and displayed size.
             //var scale = FacePhoto.ActualWidth / (bitmapSource.PixelWidth / resizeFactor);
             var scale = imgControl.ActualWidth / (bitmapSource.PixelWidth / currentResizeFactor);
@@ -213,9 +243,9 @@ namespace FaceTutorial
             // Check if this mouse position is over a face rectangle.
             bool mouseOverFace = false;
 
-            for (int i = 0; i < currentFaces.Length; ++i)
+            for (int i = 0; i < /*faces*/currentFaces.Length; ++i)
             {
-                FaceRectangle fr = currentFaces[i].FaceRectangle;
+                FaceRectangle fr = /*faces[i]*/currentFaces[i].FaceRectangle;
                 double left = fr.Left * scale;
                 double top = fr.Top * scale;
                 double width = fr.Width * scale;
@@ -224,7 +254,9 @@ namespace FaceTutorial
                 // Display the face description for this face if the mouse is over this face rectangle.
                 if (mouseXY.X >= left && mouseXY.X <= left + width && mouseXY.Y >= top && mouseXY.Y <= top + height)
                 {
-                    // David Lim
+                    // DavidLim :
+                    // currentTextBlock generically points to either faceDescriptionStatusBar
+                    // or faceDescriptionStatusBar2.
                     currentTextBlock.Text = currentFaceDescriptions[i];
                     mouseOverFace = true;
                     break;
@@ -234,23 +266,20 @@ namespace FaceTutorial
             // If the mouse is not over a face rectangle.
             if (!mouseOverFace)
             {
-                // David Lim
+                // DavidLim :
+                // currentTextBlock generically points to either faceDescriptionStatusBar
+                // or faceDescriptionStatusBar2.
                 currentTextBlock.Text = "Place the mouse pointer over a face to see the face description.";
             }
         }
 
+        // DavidLim :
+        // MSCognitiveServicesLogin_Click() is the handler for the Click event of the
+        // button named MSCognitiveServicesLogin in the xaml.
+        // This handler responds by instantiating a new FaceServiceClient class based
+        // on the FaceAPI key supplied in the FaceRecogKey TextBox.
         private void MSCognitiveServicesLogin_Click(object sender, RoutedEventArgs e)
         {
-            // Replace the first parameter with your valid subscription key.
-            //
-            // Replace or verify the region in the second parameter.
-            //
-            // You must use the same region in your REST API call as you used to obtain your subscription keys.
-            // For example, if you obtained your subscription keys from the westus region, replace
-            // "westcentralus" in the URI below with "westus".
-            //
-            // NOTE: Free trial subscription keys are generated in the westcentralus region, so if you are using
-            // a free trial subscription key, you should not need to change this region.
             faceServiceClient = new FaceServiceClient(FaceRecogKey.Text, "https://westcentralus.api.cognitive.microsoft.com/face/v1.0");
             if (faceServiceClient != null)
             {
@@ -259,31 +288,30 @@ namespace FaceTutorial
             }
         }
 
+        // DavidLim :
+        // FaceMatch_Click() is the handler for the Click event of the FaceMatch button.
         private void FaceMatch_Click(object sender, RoutedEventArgs e)
         {
-            // Check if faces is null - i.e. there are no detected faces in the left image.
             if (faces == null)
             {
                 MessageBox.Show("Error no faces on Left Hand Image.");
                 return;
             }
 
-            // Check if faces2 is null - i.e. there are no detected faces in the right image.
             if (faces2 == null)
             {
                 MessageBox.Show("Error no faces on Right Hand Image.");
                 return;
             }
 
-            // If faces contains more than one Face object, we show an error message and return.
-            // This is because the left image (i.e. the "1" image) can only contain one detected
-            // face.
             if (faces.Length > 1)
             {
                 MessageBox.Show("Left Hand Image contains more than 1 image.\r\nMulti-Face Images must be on the Right.");
                 return;
             }
 
+            // DavidLim :
+            // The real work is done in PerformFaceMatch().
             PerformFaceMatch();
         }
 
@@ -371,32 +399,41 @@ namespace FaceTutorial
             return sb.ToString();
         }
 
+        // DavidLim :
+        // Starting point for Face Matching operations.
         void PerformFaceMatch()
         {
             MatchResult.Text = "";
 
-            // The type of matching to perform is based on
-            // the size of faces2. If it contains multiple faces,
-            // 1vN matching is performed. Otherwise, 1v1 matching
-            // is performed.
+            // If the number of faces detected in the right hand image
+            // is one, we do 1 to 1 matching.
             if (faces2.Length == 1)
             {
                 Perform1To1FaceMatch();
             }
             else
             {
+                // Else we do 1 to N matching.
                 Perform1ToNFaceMatch();
             }
         }
 
+        // DavidLim :
+        // 1 to 1 Matching uses the VerifyAsync() method to perform 1 to 1 Matching.
         async void Perform1To1FaceMatch()
         {
+            // The await keyword is used so that VerifyAsync() will not return until it completes.
+            // The await keyword effectively makes VerifyAsync() synchronous.
             VerifyResult result = await faceServiceClient.VerifyAsync(faces[0].FaceId, faces2[0].FaceId);
 
             string msg = string.Format("Identical Images : {0}.\r\nConfidence : {1}.", result.IsIdentical, result.Confidence);
             MatchResult.Text = msg;
         }
 
+        // DavidLim :
+        // We use the same VerifyAsync() method to perform 1 to N matching.
+        // Our simple approach iterates through all the elements of the faces2 array
+        // and matches each with faces[0] (faces has only one element).
         async void Perform1ToNFaceMatch()
         {
             double matchThreshold;
@@ -405,7 +442,7 @@ namespace FaceTutorial
             {
                 matchThreshold = Convert.ToDouble(OneToNMatchingThreshold.Text);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show("Match Threshold Value Invalid.");
                 return;
@@ -413,15 +450,18 @@ namespace FaceTutorial
 
             try
             {
-
+                // Define an array of VerifyResult objects.
                 VerifyResult[] result = new VerifyResult[faces2.Length];
                 int i;
 
+                // Match faces[0] against all elements of faces2.
+                // Collect each result in the result array.
                 for (i = 0; i < faces2.Length; i++)
                 {
                     result[i] = await faceServiceClient.VerifyAsync(faces[0].FaceId, faces2[i].FaceId);
                 }
 
+                // Obtain the VerifyResult with the highest Confidence score.
                 int iMatchIndex = 0;
                 VerifyResult mainResult = result[0];
 
@@ -434,6 +474,9 @@ namespace FaceTutorial
                     }
                 }
 
+                // If a Confidence score that equals or surpasses matchThreshold is found,
+                // we draw a green rectangle around the detected face and also display 
+                // the result.
                 if (mainResult.Confidence >= matchThreshold)
                 {
                     DrawRectOnMatchedFace(FacePhoto2, resizeFactor2, faces2[iMatchIndex], Brushes.Green, 4);
@@ -445,15 +488,17 @@ namespace FaceTutorial
                     MatchResult.Text = "Unable to find any matching face.";
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
         }
-        
-        // David Lim
-        // DrawRectOnMatchedFace() will draw a recangle on a face image on a specified Image control.
-        void DrawRectOnMatchedFace(Image imgControl, double currentResizeFactor,  Face detectedface, SolidColorBrush brushColor, double thickness)
+
+        // DavidLim :
+        // DrawRectOnMatchedFace() is a generic method.
+        // It will draw a recangle on a face image on a specified Image control.
+        // The code is adapted from the original tutorial code for BrowseButton_Click().
+        void DrawRectOnMatchedFace(Image imgControl, double currentResizeFactor, Face detectedface, SolidColorBrush brushColor, double thickness)
         {
             ImageSource imgSrc = imgControl.Source.Clone();
             // Note that the bitmap retrieved from imgControl is exactly
