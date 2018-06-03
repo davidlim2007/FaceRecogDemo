@@ -514,7 +514,7 @@ namespace FaceTutorial
 
         // DavidLim :
         // DrawRectOnMatchedFace() is a generic method.
-        // It will draw a recangle on a face image on a specified Image control.
+        // It will draw a rectangle on a face image on a specified Image control.
         // The code is adapted from the original tutorial code for BrowseButton_Click().
         void DrawRectOnMatchedFace(Image imgControl, double currentResizeFactor, Face detectedface, SolidColorBrush brushColor, double thickness)
         {
