@@ -250,7 +250,6 @@ namespace FaceTutorial
             // currentFaces.FaceRectangle. This is where scale is important.
             //
             // Scale adjustment between the actual size and displayed size.
-            //var scale = FacePhoto.ActualWidth / (bitmapSource.PixelWidth / resizeFactor);
             var scale = imgControl.ActualWidth / (bitmapSource.PixelWidth / currentResizeFactor);
 
             // Check if this mouse position is over a face rectangle.
